@@ -6,6 +6,4 @@ interface RaspDevicesRepository {
     suspend fun getRaspDevices(): List<RaspDevices>
 
     suspend fun getRaspDeviceByType(type: String): RaspDevices?
-
-    suspend fun updateRaspDevices(): RaspDevices
 }

@@ -1,4 +1,4 @@
-package ru.spiridonov.smartserver.model.enums
+package ru.spiridonov.smartservermobile.domain.entity
 
 enum class Roles(roleValue: String, roleName: String) {
     ROLE_USER("USER", "Пользователь"),

@@ -3,7 +3,7 @@ package ru.spiridonov.smartservermobile.domain.entity
 import java.time.OffsetDateTime
 
 data class RaspState(
-    val id: Long? = null,
+    val id: Long,
 
     val dateTime: OffsetDateTime,
 

@@ -13,8 +13,4 @@ class RaspDevicesRepositoryImpl@Inject constructor(
     override suspend fun getRaspDeviceByType(type: String): RaspDevices? {
         TODO("Not yet implemented")
     }
-
-    override suspend fun updateRaspDevices(): RaspDevices {
-        TODO("Not yet implemented")
-    }
 }

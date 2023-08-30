@@ -1,9 +1,7 @@
 package ru.spiridonov.smartservermobile.domain.entity
 
-import ru.spiridonov.smartserver.model.enums.Roles
-
 data class User(
-    val id: Long? = null,
+    val id: Long,
 
     val userName: String,
 
@@ -11,5 +9,5 @@ data class User(
 
     val password: String,
 
-    val roles: Set<Roles>? = null
+    val roles: Set<Roles>
 )
