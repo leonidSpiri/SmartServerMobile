@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetRaspLastStateUseCase @Inject constructor(
     private val repository: RaspStateRepository
 ) {
-    suspend operator fun invoke() = repository.getRaspLastState()
+    suspend operator fun invoke() = repository.refreshRaspStatesList()
 }
