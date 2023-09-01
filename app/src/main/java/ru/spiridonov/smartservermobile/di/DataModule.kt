@@ -44,10 +44,10 @@ interface DataModule {
 
         @Provides
         @ApplicationScope
-        fun provideCurrListDao(
+        fun provideUserDao(
             application: Application
         ): UserDao {
-            return UserAppDatabase.getInstance(application).teamsHistoryDao()
+            return UserAppDatabase.getInstance(application).userDao()
         }
     }
 }

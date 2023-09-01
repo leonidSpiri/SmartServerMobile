@@ -9,11 +9,11 @@ import androidx.room.Query
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addUser(feederItemDbModel: UserDbModel)
+    suspend fun addUser(userDbModel: UserDbModel)
 
     @Query("SELECT * FROM user")
-    fun getUser(): UserDbModel
+    fun getUser(): UserDbModel?
 
-    @Query("SELECT refreshToken FROM user")
-    fun getUserRefreshToken(): String
+    @Query("DELETE FROM user WHERE id = :userId")
+    suspend fun deleteUser(userId: Long)
 }

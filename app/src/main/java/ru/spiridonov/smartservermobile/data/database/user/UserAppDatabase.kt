@@ -5,7 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 abstract class UserAppDatabase : RoomDatabase() {
-    abstract fun teamsHistoryDao(): UserDao
+    abstract fun userDao(): UserDao
 
     companion object {
         private var INSTANCE: UserAppDatabase? = null
