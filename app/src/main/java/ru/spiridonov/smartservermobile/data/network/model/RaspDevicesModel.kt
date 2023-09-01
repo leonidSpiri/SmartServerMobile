@@ -7,7 +7,9 @@ data class RaspDevicesModel(
     @Expose
     val id: Long,
     @Expose
-    val devType: DevTypes,
+    val devType: String,
+    @Expose
+    val pinId: Int,
     @Expose
     val description: String,
 )
