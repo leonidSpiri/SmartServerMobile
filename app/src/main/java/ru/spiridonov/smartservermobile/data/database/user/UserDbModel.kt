@@ -9,6 +9,6 @@ data class UserDbModel(
     val id: Long,
     val username: String,
     val email: String,
-    val roles: List<String>,
+    val roles: String,
     val refreshToken: String
 )

@@ -1,5 +1,6 @@
 package ru.spiridonov.smartservermobile.data.mapper
 
+import android.util.Log
 import ru.spiridonov.smartservermobile.data.network.model.RaspDevicesModel
 import ru.spiridonov.smartservermobile.data.network.model.UserResponseModel
 import ru.spiridonov.smartservermobile.domain.entity.DevTypes
@@ -27,6 +28,7 @@ class DtoMapper @Inject constructor() {
 
 fun List<String>.toRolesSet(): Set<Roles> {
     val rolesSet = mutableSetOf<Roles>()
+    Log.d("DtoMapper", "toRolesSet: $this")
     this.forEach {
         when (it) {
             "ROLE_USER" -> rolesSet.add(Roles.ROLE_USER)

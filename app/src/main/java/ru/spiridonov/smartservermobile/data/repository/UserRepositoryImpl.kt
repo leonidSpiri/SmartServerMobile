@@ -94,6 +94,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     private suspend fun parseUserResponse(userResponseModel: UserResponseModel): User {
+        Log.d("UserRepositoryImpl", userResponseModel.toString())
         val user = dtoMapper.mapUserJsonContainerToUser(userResponseModel)
         val accessToken = userResponseModel.accessToken
         val refreshToken = userResponseModel.refreshToken

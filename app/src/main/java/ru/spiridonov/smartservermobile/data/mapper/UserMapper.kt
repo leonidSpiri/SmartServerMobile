@@ -12,7 +12,7 @@ class UserMapper @Inject constructor() {
             id = user.id,
             username = user.userName,
             email = user.email,
-            roles = user.roles.toStringList(),
+            roles = user.roles.toRolesString(),
             refreshToken = refreshToken
         )
 
@@ -25,7 +25,7 @@ class UserMapper @Inject constructor() {
         )
 }
 
-fun Set<Roles>.toStringList(): List<String> {
+fun Set<Roles>.toRolesString(): String {
     val rolesList = mutableListOf<String>()
     this.forEach {
         when (it) {
@@ -33,5 +33,17 @@ fun Set<Roles>.toStringList(): List<String> {
             Roles.ROLE_ADMIN -> rolesList.add("ROLE_ADMIN")
         }
     }
-    return rolesList
+    return rolesList.toString()
+}
+
+fun String.toRolesSet(): Set<Roles> {
+    val rolesSet = mutableSetOf<Roles>()
+    val list = this.replace("[", "").replace("]", "").split(", ")
+    list.forEach {
+        when (it) {
+            "ROLE_USER" -> rolesSet.add(Roles.ROLE_USER)
+            "ROLE_ADMIN" -> rolesSet.add(Roles.ROLE_ADMIN)
+        }
+    }
+    return rolesSet
 }
