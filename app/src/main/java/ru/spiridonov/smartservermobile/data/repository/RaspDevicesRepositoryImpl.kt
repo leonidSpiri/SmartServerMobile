@@ -21,7 +21,8 @@ class RaspDevicesRepositoryImpl @Inject constructor(
             ?: updateRaspDevices()
 
     override suspend fun updateRaspDevices(): List<RaspDevices> {
-        val token = getAccessTokenUseCase.invoke() ?: return emptyList()
+        var token = getAccessTokenUseCase.invoke() ?: return emptyList()
+        token = "Bearer $token"
         val raspDevList = mutableListOf<RaspDevices>()
         apiService.getRaspDev(token).body()?.let { raspDevResponseList ->
             if (raspDevResponseList.isNotEmpty()) raspDevDao.deleteAll()

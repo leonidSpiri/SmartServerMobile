@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.spiridonov.smartservermobile.domain.entity.RaspState
 
 interface RaspStateRepository {
-    suspend fun refreshRaspStatesList()
+    suspend fun getRaspStateList()
 
-    suspend fun getAllRaspStatesList(): Flow<List<RaspState>>
+    fun getLastRaspState(): Flow<RaspState?>
 }

@@ -3,8 +3,8 @@ package ru.spiridonov.smartservermobile.domain.usecases.raspstate
 import ru.spiridonov.smartservermobile.domain.repository.RaspStateRepository
 import javax.inject.Inject
 
-class GetRaspLastStateUseCase @Inject constructor(
+class GetRaspStateListUseCase @Inject constructor(
     private val repository: RaspStateRepository
 ) {
-    suspend operator fun invoke() = repository.refreshRaspStatesList()
+    suspend operator fun invoke() = repository.getRaspStateList()
 }

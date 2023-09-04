@@ -2,14 +2,20 @@ package ru.spiridonov.smartservermobile.data.mapper
 
 import android.util.Log
 import ru.spiridonov.smartservermobile.data.network.model.RaspDevicesModel
+import ru.spiridonov.smartservermobile.data.network.model.RaspStateModel
 import ru.spiridonov.smartservermobile.data.network.model.UserResponseModel
 import ru.spiridonov.smartservermobile.domain.entity.DevTypes
 import ru.spiridonov.smartservermobile.domain.entity.RaspDevices
+import ru.spiridonov.smartservermobile.domain.entity.RaspState
 import ru.spiridonov.smartservermobile.domain.entity.Roles
 import ru.spiridonov.smartservermobile.domain.entity.User
+import ru.spiridonov.smartservermobile.domain.usecases.raspdevices.GetRaspDeviceByTypeUseCase
+import java.time.OffsetDateTime
 import javax.inject.Inject
 
-class DtoMapper @Inject constructor() {
+class DtoMapper @Inject constructor(
+    //private val getRaspDeviceByTypeUseCase: GetRaspDeviceByTypeUseCase
+) {
     fun mapUserJsonContainerToUser(jsonContainer: UserResponseModel) =
         User(
             id = jsonContainer.id,
@@ -24,6 +30,26 @@ class DtoMapper @Inject constructor() {
             devType = jsonContainer.devType.toRaspDevType(),
             description = jsonContainer.description,
         )
+
+    suspend fun mapRaspStateJsonContainerToRaspState(
+        jsonContainer: RaspStateModel,
+        getRaspDeviceByTypeUseCase: GetRaspDeviceByTypeUseCase
+    ): RaspState {
+        val statesList = mutableListOf<Pair<RaspDevices, String>>()
+        jsonContainer.raspState.split(", ").forEach {
+            val raspDev =
+                getRaspDeviceByTypeUseCase.invoke(it.substringBefore(":")) ?: return@forEach
+            statesList.add(Pair(raspDev, it.substringAfter(":")))
+        }
+
+        val date = OffsetDateTime.parse(jsonContainer.dateTime).plusHours(3)
+        return RaspState(
+            id = jsonContainer.id,
+            dateTime = date,
+            raspState = statesList,
+            isSecurityViolated = jsonContainer.isSecurityViolated
+        )
+    }
 }
 
 fun List<String>.toRolesSet(): Set<Roles> {
