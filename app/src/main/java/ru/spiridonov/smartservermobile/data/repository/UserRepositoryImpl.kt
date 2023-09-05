@@ -75,26 +75,33 @@ class UserRepositoryImpl @Inject constructor(
         ?.let { userMapper.mapUserDbModelToUser(it) }
 
     override suspend fun getAccessToken(): String? {
-        val storedToken = tokenStorage.getToken()
-        if (storedToken == null) {
-            val user = userDao.getUser() ?: return null
-            val storedRefreshToken = user.refreshToken
-            val jsonObject = JSONObject()
-            jsonObject.put("refreshToken", storedRefreshToken)
-            val jsonObjectString = jsonObject.toString()
-            val requestBody =
-                jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
-            apiService.refreshToken(requestBody).body()?.let { userResponseModel ->
-                tokenStorage.setToken(userResponseModel.accessToken)
-                userDao.addUser(user.copy(refreshToken = userResponseModel.refreshToken))
-                return userResponseModel.accessToken
+        try {
+            val storedToken = tokenStorage.getToken()
+            if (storedToken == null) {
+                val user = userDao.getUser() ?: return null
+                val storedRefreshToken = user.refreshToken
+                val jsonObject = JSONObject()
+                jsonObject.put("refreshToken", storedRefreshToken)
+                val jsonObjectString = jsonObject.toString()
+                val requestBody =
+                    jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
+                val response = apiService.refreshToken(requestBody)
+                Log.d("UserRepositoryImpl", response.toString())
+                if (!response.isSuccessful || response.body() == null) return null
+                response.body()?.let { userResponseModel ->
+                    tokenStorage.setToken(userResponseModel.accessToken)
+                    userDao.addUser(user.copy(refreshToken = userResponseModel.refreshToken))
+                    return userResponseModel.accessToken
+                }
             }
+            return storedToken
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
-        return storedToken
     }
 
     private suspend fun parseUserResponse(userResponseModel: UserResponseModel): User {
-        Log.d("UserRepositoryImpl", userResponseModel.toString())
         val user = dtoMapper.mapUserJsonContainerToUser(userResponseModel)
         val accessToken = userResponseModel.accessToken
         val refreshToken = userResponseModel.refreshToken

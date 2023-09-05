@@ -1,30 +1,25 @@
 package ru.spiridonov.smartservermobile.presentation
 
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.retry
-import kotlinx.coroutines.launch
 import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.SmartServerApp
 import ru.spiridonov.smartservermobile.databinding.ActivityMainBinding
-import ru.spiridonov.smartservermobile.presentation.ui.home.HomeState
+import ru.spiridonov.smartservermobile.presentation.auth.AuthActivity
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
     private val component by lazy {
         (application as SmartServerApp).component
     }
@@ -35,36 +30,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
         viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
-        createScreen()
-        viewModel.checkUserLoggedIn()
-        //viewModel.login("admin", "1")
         observeViewModel()
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.state
-                    .retry(2) {
-                        delay(10000)
-                        true
-                    }.catch {
-                        Log.d("MainActivity", "getLastRaspState: ")
-                    }
-                    .collect {
-                        when (it) {
-                            is HomeState.Loading -> {
-                                Log.d("MainViewModel", "observeViewModel: Loading")
-                            }
-
-                            is HomeState.Content -> {
-                                Log.d("MainViewModel", "observeViewModel: ${it.raspState}")
-                            }
+        viewModel.mainActivityState.observe(this) { state ->
+            when (state) {
+                is MainActivityState.NeedToReLogin -> {
+                    AlertDialog.Builder(this)
+                        .setTitle("Внимание")
+                        .setMessage("Необходимо войти в аккаунт")
+                        .setPositiveButton("Ок") { _, _ ->
+                            val intent = AuthActivity.newIntent(this)
+                            startActivity(intent)
                         }
-                    }
+                        .setCancelable(false)
+                        .show()
+                }
+
+                is MainActivityState.SetupView ->
+                    createScreen()
             }
         }
     }

@@ -8,7 +8,7 @@ object TokenStorage {
     private var lastRefreshTime: Long = 0
 
     fun getToken(): String? {
-        if ((lastRefreshTime + 5 * 60 * 1000) > Date().time) {
+        if ((lastRefreshTime + (5 * 60 * 1000)) < Date().time) {
             lastRefreshTime = 0
             accessToken = null
         }

@@ -5,6 +5,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.spiridonov.smartservermobile.presentation.MainViewModel
+import ru.spiridonov.smartservermobile.presentation.auth.AuthViewModel
 import ru.spiridonov.smartservermobile.presentation.ui.dashboard.DashboardViewModel
 import ru.spiridonov.smartservermobile.presentation.ui.home.HomeViewModel
 import ru.spiridonov.smartservermobile.presentation.ui.notifications.NotificationsViewModel
@@ -17,6 +18,11 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     fun bindMainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AuthViewModel::class)
+    fun bindAuthViewModel(viewModel: AuthViewModel): ViewModel
 
     @Binds
     @IntoMap
