@@ -31,6 +31,12 @@ class RaspStateRepositoryImpl @Inject constructor(
     override suspend fun getRaspStateList() {
     }
 
+    override suspend fun getRequiredTemp(): Int {
+        var token = getAccessTokenUseCase.invoke() ?: return 0
+        token = "Bearer $token"
+        return apiService.getRequiredTemp(token)
+    }
+
     override fun getLastRaspState(): Flow<RaspState?> = flow {
         while (true) {
             downloadRaspState()

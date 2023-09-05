@@ -46,6 +46,11 @@ interface ApiService {
         @Body requestBody: RequestBody
     ): Response<String>
 
+    @GET("mobile/required_temp")
+    suspend fun getRequiredTemp(
+        @Header("Authorization") token: String
+    ): Int
+
     @POST("auth/signin")
     suspend fun signIn(
         @Body requestBody: RequestBody

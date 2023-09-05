@@ -60,6 +60,7 @@ class HomeFragment : Fragment() {
             when (mainActivityState) {
                 is MainActivityState.NeedToReLogin -> {
                     binding.textHome.text = "Необходимо войти в аккаунт"
+                    binding.pbLoading.visibility = View.GONE
                 }
 
                 is MainActivityState.SetupView -> {
@@ -74,6 +75,7 @@ class HomeFragment : Fragment() {
                                         }
 
                                         is HomeState.Content -> {
+                                            viewModel.getRequiredTemp()
                                             Log.d(
                                                 "HomeFragment",
                                                 "observeViewModels: ${homeState.raspState}"
