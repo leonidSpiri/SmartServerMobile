@@ -50,7 +50,7 @@ class UserRepositoryImpl @Inject constructor(
             jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
         apiService.logout(requestBody)
         tokenStorage.clearToken()
-        userDao.deleteUser(user.id)
+        userDao.deleteAll()
     }
 
     override suspend fun register(user: User): User? {
@@ -106,6 +106,7 @@ class UserRepositoryImpl @Inject constructor(
         val accessToken = userResponseModel.accessToken
         val refreshToken = userResponseModel.refreshToken
         tokenStorage.setToken(accessToken)
+        userDao.deleteAll()
         userDao.addUser(userMapper.mapUserToUserDbModel(user, refreshToken))
         return user
     }

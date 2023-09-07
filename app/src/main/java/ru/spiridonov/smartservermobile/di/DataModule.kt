@@ -12,10 +12,12 @@ import ru.spiridonov.smartservermobile.data.network.ApiFactory
 import ru.spiridonov.smartservermobile.data.network.ApiService
 import ru.spiridonov.smartservermobile.data.repository.RaspDevicesRepositoryImpl
 import ru.spiridonov.smartservermobile.data.repository.RaspStateRepositoryImpl
+import ru.spiridonov.smartservermobile.data.repository.SecurityRepositoryImpl
 import ru.spiridonov.smartservermobile.data.repository.UserRepositoryImpl
 import ru.spiridonov.smartservermobile.data.storage.TokenStorage
 import ru.spiridonov.smartservermobile.domain.repository.RaspDevicesRepository
 import ru.spiridonov.smartservermobile.domain.repository.RaspStateRepository
+import ru.spiridonov.smartservermobile.domain.repository.SecurityRepository
 import ru.spiridonov.smartservermobile.domain.repository.UserRepository
 
 @Module
@@ -32,6 +34,10 @@ interface DataModule {
     @Binds
     @ApplicationScope
     fun bindRaspStateRepository(impl: RaspStateRepositoryImpl): RaspStateRepository
+
+    @Binds
+    @ApplicationScope
+    fun bindSecurityRepository(impl: SecurityRepositoryImpl): SecurityRepository
 
     companion object {
         @Provides

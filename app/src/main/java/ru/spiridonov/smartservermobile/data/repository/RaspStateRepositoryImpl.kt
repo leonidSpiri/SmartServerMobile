@@ -10,12 +10,16 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import ru.spiridonov.smartservermobile.data.mapper.DtoMapper
 import ru.spiridonov.smartservermobile.data.network.ApiService
 import ru.spiridonov.smartservermobile.domain.entity.RaspState
 import ru.spiridonov.smartservermobile.domain.repository.RaspStateRepository
 import ru.spiridonov.smartservermobile.domain.usecases.raspdevices.GetRaspDeviceByTypeUseCase
 import ru.spiridonov.smartservermobile.domain.usecases.user.GetAccessTokenUseCase
+import java.util.Locale
 import javax.inject.Inject
 
 class RaspStateRepositoryImpl @Inject constructor(
@@ -37,11 +41,27 @@ class RaspStateRepositoryImpl @Inject constructor(
         return apiService.getRequiredTemp(token)
     }
 
+    override suspend fun setNewRaspState(raspState: RaspState) {
+        var token = getAccessTokenUseCase.invoke() ?: return
+        token = "Bearer $token"
+        val jsonObject = JSONObject()
+        var state = ""
+        raspState.raspState.forEach {
+            state += "${it.first.devType}:${it.second.lowercase(Locale.getDefault())},"
+        }
+        state = state.dropLast(1)
+        jsonObject.put("newRequiredState", state)
+        val jsonObjectString = jsonObject.toString()
+        val requestBody =
+            jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
+        apiService.newMobileRequest(token, requestBody)
+    }
+
     override fun getLastRaspState(): Flow<RaspState?> = flow {
         while (true) {
             downloadRaspState()
             emit(raspState)
-            delay(20000)
+            delay(31000)
         }
     }.retry(10) {
         delay(10000)

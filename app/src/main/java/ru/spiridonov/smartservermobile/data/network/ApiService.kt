@@ -44,7 +44,7 @@ interface ApiService {
     suspend fun newMobileRequest(
         @Header("Authorization") token: String,
         @Body requestBody: RequestBody
-    ): Response<String>
+    ): Response<*>
 
     @GET("mobile/required_temp")
     suspend fun getRequiredTemp(

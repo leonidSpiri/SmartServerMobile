@@ -8,5 +8,7 @@ interface RaspStateRepository {
 
     suspend fun getRequiredTemp(): Int
 
+    suspend fun setNewRaspState(raspState: RaspState)
+
     fun getLastRaspState(): Flow<RaspState?>
 }

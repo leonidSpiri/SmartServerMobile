@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import ru.spiridonov.smartservermobile.domain.entity.Security
 import ru.spiridonov.smartservermobile.domain.usecases.raspdevices.GetRaspDevicesUseCase
 import ru.spiridonov.smartservermobile.domain.usecases.raspstate.GetLastRaspStateUseCase
+import ru.spiridonov.smartservermobile.domain.usecases.security.GetLastSecurityUseCase
 import ru.spiridonov.smartservermobile.domain.usecases.user.GetAccessTokenUseCase
 import ru.spiridonov.smartservermobile.domain.usecases.user.IsUserLoggedInUseCase
 import ru.spiridonov.smartservermobile.presentation.ui.home.HomeState
@@ -23,10 +23,9 @@ class MainViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getRaspDevicesUseCase: GetRaspDevicesUseCase,
-    getLastRaspStateUseCase: GetLastRaspStateUseCase
+    getLastRaspStateUseCase: GetLastRaspStateUseCase,
+    getLastSecurityUseCase: GetLastSecurityUseCase
 ) : ViewModel() {
-
-    private val loadingFlow = MutableSharedFlow<HomeState>()
 
     private val _mainActivityState = MutableLiveData<MainActivityState>()
     val mainActivityState: LiveData<MainActivityState>
@@ -56,9 +55,8 @@ class MainViewModel @Inject constructor(
         .filter { it != null && it.raspState.isNotEmpty() }
         .map { HomeState.Content(it!!) as HomeState }
         .onStart { emit(HomeState.Loading) }
-        .mergeWith(loadingFlow)
 
-    private fun <T> Flow<T>.mergeWith(another: Flow<T>): Flow<T> {
-        return merge(this, another)
-    }
+    val securityStateFlow: Flow<Security> = getLastSecurityUseCase.invoke()
+        .filter { it != null }
+        .map { it!! }
 }

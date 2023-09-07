@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="raspState"
             type="ru.spiridonov.smartservermobile.domain.entity.RaspState" />
+
+        <variable
+            name="securityState"
+            type="ru.spiridonov.smartservermobile.domain.entity.Security" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".presentation.ui.home.HomeFragment">
@@ -48,37 +52,52 @@
             android:inputType="number"
             android:textAlignment="center"
             android:textColor="@color/primaryTextColor"
+            android:cursorVisible="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_required_temp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_plus_temp"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/plus"
             android:textSize="20sp"
+            app:strokeColor="@color/orange"
+            android:textColor="@color/orange"
             app:layout_constraintStart_toEndOf="@+id/et_required_temp"
             app:layout_constraintTop_toTopOf="@+id/et_required_temp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_minus_temp"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text="@string/minus"
             android:textSize="20sp"
+            app:strokeColor="@color/blue"
+            android:textColor="@color/blue"
             app:layout_constraintEnd_toStartOf="@+id/et_required_temp"
             app:layout_constraintTop_toTopOf="@+id/et_required_temp" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/primaryTextColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_required_temp" />
 
         <TextView
             android:id="@+id/tv_real_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:text="@string/real_state"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +110,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:textColor="@color/primaryTextColor"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_real_state"
             app:setRealTemp="@{raspState.raspState}"
@@ -104,7 +123,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:textColor="@color/primaryTextColor"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_real_temp"
             app:setRealBoxTemp="@{raspState.raspState}"
@@ -116,7 +135,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_real_box_temp"
             app:setRealFan="@{raspState.raspState}"
@@ -128,11 +147,56 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_real_fan"
             app:setSecurityViolated="@{raspState.securityViolated}"
             tools:text="Безопасность периметра в норме" />
+
+        <TextView
+            android:id="@+id/tv_state_security"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_security_violated"
+            app:setSecurityState="@{securityState}"
+            tools:text="Поставлено на охрану" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/primaryTextColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_state_security" />
+
+        <TextView
+            android:id="@+id/tv_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/actions"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_state_security" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/set_security"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_actions"
+            app:setButtonSecurityState="@{securityState}"
+            style="?attr/materialButtonOutlinedStyle"
+            tools:text="Поставить на охрану" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

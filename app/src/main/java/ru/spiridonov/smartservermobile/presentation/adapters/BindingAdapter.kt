@@ -1,11 +1,15 @@
 package ru.spiridonov.smartservermobile.presentation.adapters
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.google.android.material.button.MaterialButton
 import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.domain.entity.DevTypes
 import ru.spiridonov.smartservermobile.domain.entity.RaspDevices
+import ru.spiridonov.smartservermobile.domain.entity.Security
+
 
 @BindingAdapter("setRealTemp")
 fun setRealTemp(textView: TextView, raspState: List<Pair<RaspDevices, String>>?) {
@@ -25,13 +29,74 @@ fun setRealBoxTemp(textView: TextView, raspState: List<Pair<RaspDevices, String>
 
 @BindingAdapter("setRealFan")
 fun setRealFan(textView: TextView, raspState: List<Pair<RaspDevices, String>>?) {
+    val context = textView.context
     val realTemp = raspState?.find { it.first.devType == DevTypes.FAN }?.second.toBoolean()
-    textView.text = if (realTemp) "Вентилятор включен" else "Вентилятор выключен"
-    textView.setTextColor(if (realTemp) Color.GREEN else Color.YELLOW)
+    textView.text =
+        if (realTemp) context.getString(R.string.fan_on) else context.getString(R.string.fan_off)
+    textView.setTextColor(
+        if (realTemp) context.resources.getColor(
+            R.color.green,
+            context.theme
+        ) else Color.RED
+    )
 }
 
 @BindingAdapter("setSecurityViolated")
 fun setSecurityViolated(textView: TextView, isSecurityViolated: Boolean) {
-    textView.text = if (isSecurityViolated) "Нарушена безопасность периметра" else "Безопасность периметра в норме"
-    textView.setTextColor(if (isSecurityViolated) Color.RED else Color.GREEN)
+    val context = textView.context
+    textView.text =
+        if (isSecurityViolated) context.getString(R.string.security_is_violated) else context.getString(
+            R.string.security_is_not_violated
+        )
+    textView.setTextColor(
+        if (isSecurityViolated) Color.RED else context.resources.getColor(
+            R.color.green,
+            context.theme
+        )
+    )
 }
+
+@BindingAdapter("setSecurityState")
+fun setSecurityState(textView: TextView, security: Security?) =
+    security?.let {
+        val context = textView.context
+        val text =
+            if (security.isSecurityTurnOn) context.getString(R.string.on_security) else context.getString(
+                R.string.off_security
+            )
+        with(security.dateTime) {
+            val date = "$hour:$minute $dayOfMonth-$monthValue-$year"
+            textView.text =
+                context.getString(R.string.security_set_by_user, text, security.user.userName, date)
+            textView.setTextColor(
+                if (security.isSecurityTurnOn) context.resources.getColor(
+                    R.color.green,
+                    context.theme
+                ) else Color.RED
+            )
+        }
+
+    }
+
+@BindingAdapter("setButtonSecurityState")
+fun setButtonSecurityState(btn: MaterialButton, security: Security?) =
+    security?.let {
+        val context = btn.context
+        btn.text =
+            if (security.isSecurityTurnOn) context.getString(R.string.set_off_security) else context.getString(
+                R.string.set_on_security
+            )
+        btn.setTextColor(
+            if (security.isSecurityTurnOn) Color.RED else context.resources.getColor(
+                R.color.green,
+                context.theme
+            )
+        )
+        btn.strokeColor =
+            (if (security.isSecurityTurnOn) ColorStateList.valueOf(Color.RED) else ColorStateList.valueOf(
+                context.resources.getColor(
+                    R.color.green,
+                    context.theme
+                )
+            ))
+    }

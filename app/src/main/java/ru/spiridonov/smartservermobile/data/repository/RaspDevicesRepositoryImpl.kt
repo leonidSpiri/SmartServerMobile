@@ -16,9 +16,11 @@ class RaspDevicesRepositoryImpl @Inject constructor(
     private val raspDevDao: RaspDevDao,
     private val getAccessTokenUseCase: GetAccessTokenUseCase
 ) : RaspDevicesRepository {
-    override suspend fun getRaspDevices() =
-        raspDevDao.getAll()?.map { raspDevMapper.mapRaspDevDbModelToRaspDev(it) }
-            ?: updateRaspDevices()
+    override suspend fun getRaspDevices(): List<RaspDevices> {
+        val list = raspDevDao.getAll()?.map { raspDevMapper.mapRaspDevDbModelToRaspDev(it) }
+        if (list.isNullOrEmpty()) return updateRaspDevices()
+        return list
+    }
 
     override suspend fun updateRaspDevices(): List<RaspDevices> {
         var token = getAccessTokenUseCase.invoke() ?: return emptyList()

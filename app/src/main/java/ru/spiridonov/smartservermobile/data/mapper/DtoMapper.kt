@@ -3,11 +3,13 @@ package ru.spiridonov.smartservermobile.data.mapper
 import android.util.Log
 import ru.spiridonov.smartservermobile.data.network.model.RaspDevicesModel
 import ru.spiridonov.smartservermobile.data.network.model.RaspStateModel
+import ru.spiridonov.smartservermobile.data.network.model.SecurityModel
 import ru.spiridonov.smartservermobile.data.network.model.UserResponseModel
 import ru.spiridonov.smartservermobile.domain.entity.DevTypes
 import ru.spiridonov.smartservermobile.domain.entity.RaspDevices
 import ru.spiridonov.smartservermobile.domain.entity.RaspState
 import ru.spiridonov.smartservermobile.domain.entity.Roles
+import ru.spiridonov.smartservermobile.domain.entity.Security
 import ru.spiridonov.smartservermobile.domain.entity.User
 import ru.spiridonov.smartservermobile.domain.usecases.raspdevices.GetRaspDeviceByTypeUseCase
 import java.time.OffsetDateTime
@@ -48,6 +50,21 @@ class DtoMapper @Inject constructor(
             dateTime = date,
             raspState = statesList,
             isSecurityViolated = jsonContainer.isSecurityViolated
+        )
+    }
+
+    fun mapSecurityJsonContainerToSecurity(jsonContainer: SecurityModel): Security {
+        val date = OffsetDateTime.parse(jsonContainer.dateTime).plusHours(3)
+        return Security(
+            id = jsonContainer.id,
+            dateTime = date,
+            user = User(
+                id = jsonContainer.user.id,
+                userName = jsonContainer.user.username,
+                email = "",
+                roles = emptySet()
+            ),
+            isSecurityTurnOn = jsonContainer.isSecurityTurnOn
         )
     }
 }

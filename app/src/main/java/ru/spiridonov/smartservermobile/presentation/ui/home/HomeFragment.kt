@@ -2,6 +2,7 @@ package ru.spiridonov.smartservermobile.presentation.ui.home
 
 import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +11,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.spiridonov.smartservermobile.SmartServerApp
 import ru.spiridonov.smartservermobile.databinding.FragmentHomeBinding
+import ru.spiridonov.smartservermobile.domain.entity.RaspState
+import ru.spiridonov.smartservermobile.domain.entity.Security
 import ru.spiridonov.smartservermobile.presentation.MainActivityState
 import ru.spiridonov.smartservermobile.presentation.MainViewModel
 import ru.spiridonov.smartservermobile.presentation.ViewModelFactory
 import javax.inject.Inject
+
 
 class HomeFragment : Fragment() {
 
@@ -27,6 +34,10 @@ class HomeFragment : Fragment() {
     private val component by lazy {
         (requireActivity().application as SmartServerApp).component
     }
+
+    private var tempSetJob: Job? = null
+    private lateinit var raspState: RaspState
+    private lateinit var securityState: Security
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -53,6 +64,42 @@ class HomeFragment : Fragment() {
             ViewModelProvider(requireActivity(), viewModelFactory)[MainViewModel::class.java]
         observeMainViewModel()
         observeHomeViewModel()
+        btnClickHandler()
+    }
+
+    private fun btnClickHandler() {
+        binding.btnPlusTemp.setOnClickListener {
+            val temp = (binding.etRequiredTemp.text.toString()).toInt() + 1
+            binding.etRequiredTemp.setText(temp.toString())
+            setNewRequiredTemp()
+
+        }
+        binding.btnMinusTemp.setOnClickListener {
+            val temp = (binding.etRequiredTemp.text.toString()).toInt() - 1
+            binding.etRequiredTemp.setText(temp.toString())
+            setNewRequiredTemp()
+        }
+        binding.etRequiredTemp.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    setNewRequiredTemp()
+                    return true
+                }
+                return false
+            }
+        })
+        binding.setSecurity.setOnClickListener {
+            binding.pbLoading.visibility = View.VISIBLE
+            viewModel.setNewSecurity(!securityState.isSecurityTurnOn)
+        }
+    }
+
+    private fun setNewRequiredTemp() {
+        tempSetJob?.cancel()
+        tempSetJob = lifecycleScope.launch(Dispatchers.IO) {
+            delay(1000)
+            viewModel.setNewRequiredState(newTemp = binding.etRequiredTemp.text.toString(), raspState = raspState)
+        }
     }
 
     private fun observeHomeViewModel() {
@@ -76,14 +123,27 @@ class HomeFragment : Fragment() {
                                     when (homeState) {
                                         is HomeState.Loading -> {
                                             binding.pbLoading.visibility = View.VISIBLE
-                                            viewModel.getRequiredTemp()
+
                                         }
 
                                         is HomeState.Content -> {
+                                            viewModel.getRequiredTemp()
                                             binding.raspState = homeState.raspState
+                                            raspState = homeState.raspState
                                             binding.pbLoading.visibility = View.GONE
                                         }
                                     }
+                                }
+                        }
+                    }
+
+                    lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                            mainViewModel.securityStateFlow
+                                .collect { security ->
+                                    binding.securityState = security
+                                    securityState = security
+                                    binding.pbLoading.visibility = View.GONE
                                 }
                         }
                     }
