@@ -36,6 +36,11 @@ class MainActivity : AppCompatActivity() {
         observeViewModel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.init()
+    }
+
     private fun observeViewModel() {
         viewModel.mainActivityState.observe(this) { state ->
             when (state) {

@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
         get() = _mainActivityState
 
 
-    init {
+    fun init() {
         checkUserLoggedIn()
     }
 
@@ -47,8 +47,7 @@ class MainViewModel @Inject constructor(
                         getRaspDevicesUseCase.invoke()
                         _mainActivityState.postValue(MainActivityState.SetupView)
                     }
-                }
-                else
+                } else
                     _mainActivityState.postValue(MainActivityState.NeedToReLogin)
             }
         }

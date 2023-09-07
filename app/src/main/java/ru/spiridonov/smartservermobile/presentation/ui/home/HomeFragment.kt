@@ -2,7 +2,6 @@ package ru.spiridonov.smartservermobile.presentation.ui.home
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,14 +51,20 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         mainViewModel =
             ViewModelProvider(requireActivity(), viewModelFactory)[MainViewModel::class.java]
-        observeViewModels()
+        observeMainViewModel()
+        observeHomeViewModel()
     }
 
-    private fun observeViewModels() {
+    private fun observeHomeViewModel() {
+        viewModel.requiredTemp.observe(viewLifecycleOwner) {
+            binding.etRequiredTemp.setText(it.toString())
+        }
+    }
+
+    private fun observeMainViewModel() {
         mainViewModel.mainActivityState.observe(viewLifecycleOwner) { mainActivityState ->
             when (mainActivityState) {
                 is MainActivityState.NeedToReLogin -> {
-                    binding.textHome.text = "Необходимо войти в аккаунт"
                     binding.pbLoading.visibility = View.GONE
                 }
 
@@ -70,17 +75,12 @@ class HomeFragment : Fragment() {
                                 .collect { homeState ->
                                     when (homeState) {
                                         is HomeState.Loading -> {
-                                            Log.d("HomeFragment", "observeViewModels: Loading")
                                             binding.pbLoading.visibility = View.VISIBLE
+                                            viewModel.getRequiredTemp()
                                         }
 
                                         is HomeState.Content -> {
-                                            viewModel.getRequiredTemp()
-                                            Log.d(
-                                                "HomeFragment",
-                                                "observeViewModels: ${homeState.raspState}"
-                                            )
-                                            binding.textHome.text = homeState.raspState.toString()
+                                            binding.raspState = homeState.raspState
                                             binding.pbLoading.visibility = View.GONE
                                         }
                                     }

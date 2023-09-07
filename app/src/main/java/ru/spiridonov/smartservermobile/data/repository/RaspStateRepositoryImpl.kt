@@ -43,8 +43,8 @@ class RaspStateRepositoryImpl @Inject constructor(
             emit(raspState)
             delay(20000)
         }
-    }.retry(2) {
-        delay(1000)
+    }.retry(10) {
+        delay(10000)
         Log.d("RaspStateRepositoryImpl", "getLastRaspState: ${it.message}")
         true
     }.catch {
