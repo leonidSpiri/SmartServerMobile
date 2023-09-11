@@ -32,8 +32,23 @@ class RaspStateRepositoryImpl @Inject constructor(
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private var raspState: RaspState? = null
 
-    override suspend fun getRaspStateList() {
+    override suspend fun getRaspStateListByDate(date: String): List<RaspState> {
+        var token = getAccessTokenUseCase.invoke() ?: return emptyList()
+        token = "Bearer $token"
+        val statesList = mutableListOf<RaspState>()
+        apiService.allRaspStateByDate(token, date).body()?.let { raspStateResponseList ->
+            raspStateResponseList.forEach { raspStateResponse ->
+                statesList.add(
+                    dtoMapper.mapRaspStateJsonContainerToRaspState(
+                        raspStateResponse,
+                        getRaspDeviceByTypeUseCase
+                    )
+                )
+            }
+        }
+        return statesList
     }
+
 
     override suspend fun getRequiredTemp(): Int {
         var token = getAccessTokenUseCase.invoke() ?: return 0

@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import ru.spiridonov.smartservermobile.data.network.model.RaspDevicesModel
 import ru.spiridonov.smartservermobile.data.network.model.RaspStateModel
 import ru.spiridonov.smartservermobile.data.network.model.SecurityModel
@@ -19,9 +20,10 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Response<RaspStateModel>
 
-    @GET("rasp_state/all_responses")
-    suspend fun allRaspState(
-        @Header("Authorization") token: String
+    @GET("rasp_state/all_responses/{date}")
+    suspend fun allRaspStateByDate(
+        @Header("Authorization") token: String,
+        @Path(value = "date") date:String
     ): Response<List<RaspStateModel>>
 
     @GET("rasp_dev")
