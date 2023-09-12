@@ -6,6 +6,47 @@
     android:layout_height="match_parent"
     tools:context=".presentation.ui.dashboard.DashboardFragment">
 
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_two_yesterday"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="@string/two_yesterday"
+        app:layout_constraintEnd_toStartOf="@id/btn_two_yesterday"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/blue"
+        android:textColor="@color/blue"
+        app:layout_constraintTop_toTopOf="@id/btn_yesterday" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_yesterday"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/yesterday"
+        android:layout_marginTop="16dp"
+        app:strokeColor="@color/blue"
+        android:textColor="@color/blue"
+        app:layout_constraintEnd_toStartOf="@id/btn_today"
+        app:layout_constraintStart_toEndOf="@id/btn_two_yesterday"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_today"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/today"
+        android:layout_marginEnd="10dp"
+        app:strokeColor="@color/blue"
+        android:textColor="@color/blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_yesterday"
+        app:layout_constraintTop_toTopOf="@id/btn_yesterday" />
+
+
     <org.eazegraph.lib.charts.ValueLineChart
         android:id="@+id/cubiclinechartHumidity"
         android:layout_width="match_parent"
@@ -19,5 +60,7 @@
         app:egUseOverlapFill="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/btn_yesterday" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

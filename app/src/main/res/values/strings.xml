@@ -22,4 +22,7 @@
     <string name="fan_on">Вентилятор включен</string>
     <string name="fan_off">Вентилятор выключен</string>
     <string name="security_set_by_user">%1$s пользователем %2$s в %3$s</string>
+    <string name="two_yesterday">Позавчера</string>
+    <string name="yesterday">Вчера</string>
+    <string name="today">Сегодня</string>
 </resources>

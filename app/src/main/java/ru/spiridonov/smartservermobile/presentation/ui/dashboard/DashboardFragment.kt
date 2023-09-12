@@ -1,15 +1,18 @@
 package ru.spiridonov.smartservermobile.presentation.ui.dashboard
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import org.eazegraph.lib.models.ValueLinePoint
 import org.eazegraph.lib.models.ValueLineSeries
+import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.SmartServerApp
 import ru.spiridonov.smartservermobile.databinding.FragmentDashboardBinding
 import ru.spiridonov.smartservermobile.domain.entity.DevTypes
@@ -46,9 +49,47 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[DashboardViewModel::class.java]
-        viewModel.getRaspStateListByDate("2023-08-15")
-        viewModel.raspStateList.observe(viewLifecycleOwner) {raspStateList ->
+        observeViewModel()
+        buttonClickListener()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getRaspStateListByDate(viewModel.todayDate())
+        setDefaultButtonsState()
+        binding.btnToday.strokeColor = ColorStateList.valueOf(Color.RED)
+        binding.btnToday.setTextColor(Color.RED)
+    }
+
+    private fun buttonClickListener() {
+        binding.btnToday.setOnClickListener {
+            viewModel.getRaspStateListByDate(viewModel.todayDate())
+            setDefaultButtonsState()
+            binding.btnToday.strokeColor = ColorStateList.valueOf(Color.RED)
+            binding.btnToday.setTextColor(Color.RED)
+        }
+        binding.btnYesterday.setOnClickListener {
+            viewModel.getRaspStateListByDate(viewModel.yesterdayDate())
+            setDefaultButtonsState()
+            binding.btnYesterday.strokeColor = ColorStateList.valueOf(Color.RED)
+            binding.btnYesterday.setTextColor(Color.RED)
+        }
+        binding.btnTwoYesterday.setOnClickListener {
+            viewModel.getRaspStateListByDate(viewModel.twoDaysAgoDate())
+            setDefaultButtonsState()
+            binding.btnTwoYesterday.strokeColor = ColorStateList.valueOf(Color.RED)
+            binding.btnTwoYesterday.setTextColor(Color.RED)
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.raspStateList.observe(viewLifecycleOwner) { raspStateList ->
+            if (raspStateList.isEmpty())
+                Toast.makeText(
+                    requireContext(),
+                    "Нет данных за выбранный день",
+                    Toast.LENGTH_SHORT
+                ).show()
             val chart = binding.cubiclinechartHumidity
             val series = ValueLineSeries()
             series.color = Color.parseColor("#52BF25")
@@ -68,6 +109,17 @@ class DashboardFragment : Fragment() {
             chart.startAnimation()
         }
     }
+
+    private fun setDefaultButtonsState() =
+        ColorStateList.valueOf(resources.getColor(R.color.blue, requireContext().theme)).apply {
+            binding.btnToday.strokeColor = this
+            binding.btnToday.setTextColor(this)
+            binding.btnYesterday.strokeColor = this
+            binding.btnYesterday.setTextColor(this)
+            binding.btnTwoYesterday.strokeColor = this
+            binding.btnTwoYesterday.setTextColor(this)
+        }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
