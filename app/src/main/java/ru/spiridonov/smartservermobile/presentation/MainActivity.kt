@@ -3,6 +3,7 @@ package ru.spiridonov.smartservermobile.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -74,5 +75,9 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    fun changeProgressBarState(turnOn: Boolean = true) {
+        binding.pbLoading.isGone = !turnOn
     }
 }

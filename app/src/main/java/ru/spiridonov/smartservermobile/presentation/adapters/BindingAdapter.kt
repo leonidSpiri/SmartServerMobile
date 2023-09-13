@@ -9,6 +9,7 @@ import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.domain.entity.DevTypes
 import ru.spiridonov.smartservermobile.domain.entity.RaspDevices
 import ru.spiridonov.smartservermobile.domain.entity.Security
+import java.time.OffsetDateTime
 
 
 @BindingAdapter("setRealTemp")
@@ -100,3 +101,15 @@ fun setButtonSecurityState(btn: MaterialButton, security: Security?) =
                 )
             ))
     }
+
+@BindingAdapter("parseOffsetDateTime")
+fun parseOffsetDateTime(textView: TextView, date: OffsetDateTime) {
+    val month =
+        if (date.monthValue >= 10) date.monthValue.toString() else "0${date.monthValue}"
+    val day =
+        if (date.dayOfMonth >= 10) date.dayOfMonth.toString() else "0${date.dayOfMonth}"
+    val hour = if (date.hour >= 10) date.hour.toString() else "0${date.hour}"
+    val minute = if (date.minute >= 10) date.minute.toString() else "0${date.minute}"
+    textView.text = textView.context.getString(R.string.time_date, hour, minute, day, month, date.year.toString())
+
+}

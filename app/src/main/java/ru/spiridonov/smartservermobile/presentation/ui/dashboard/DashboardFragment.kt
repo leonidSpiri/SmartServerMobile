@@ -16,6 +16,7 @@ import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.SmartServerApp
 import ru.spiridonov.smartservermobile.databinding.FragmentDashboardBinding
 import ru.spiridonov.smartservermobile.domain.entity.DevTypes
+import ru.spiridonov.smartservermobile.presentation.MainActivity
 import ru.spiridonov.smartservermobile.presentation.ViewModelFactory
 import javax.inject.Inject
 
@@ -55,6 +56,7 @@ class DashboardFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        (requireActivity() as MainActivity).changeProgressBarState()
         viewModel.getRaspStateListByDate(viewModel.todayDate())
         setDefaultButtonsState()
         binding.btnToday.strokeColor = ColorStateList.valueOf(Color.RED)
@@ -67,23 +69,27 @@ class DashboardFragment : Fragment() {
             setDefaultButtonsState()
             binding.btnToday.strokeColor = ColorStateList.valueOf(Color.RED)
             binding.btnToday.setTextColor(Color.RED)
+            (requireActivity() as MainActivity).changeProgressBarState()
         }
         binding.btnYesterday.setOnClickListener {
             viewModel.getRaspStateListByDate(viewModel.yesterdayDate())
             setDefaultButtonsState()
             binding.btnYesterday.strokeColor = ColorStateList.valueOf(Color.RED)
             binding.btnYesterday.setTextColor(Color.RED)
+            (requireActivity() as MainActivity).changeProgressBarState()
         }
         binding.btnTwoYesterday.setOnClickListener {
             viewModel.getRaspStateListByDate(viewModel.twoDaysAgoDate())
             setDefaultButtonsState()
             binding.btnTwoYesterday.strokeColor = ColorStateList.valueOf(Color.RED)
             binding.btnTwoYesterday.setTextColor(Color.RED)
+            (requireActivity() as MainActivity).changeProgressBarState()
         }
     }
 
     private fun observeViewModel() {
         viewModel.raspStateList.observe(viewLifecycleOwner) { raspStateList ->
+            (requireActivity() as MainActivity).changeProgressBarState(false)
             if (raspStateList.isEmpty())
                 Toast.makeText(
                     requireContext(),

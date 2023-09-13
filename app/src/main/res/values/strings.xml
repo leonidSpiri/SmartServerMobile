@@ -2,7 +2,7 @@
     <string name="app_name">Климат в серверной</string>
     <string name="title_home">Главная</string>
     <string name="title_dashboard">История</string>
-    <string name="title_notifications">Профиль</string>
+    <string name="title_notifications">События</string>
     <string name="login">Login</string>
     <string name="password">Пароль</string>
     <string name="sign_in">Войти</string>
@@ -25,4 +25,6 @@
     <string name="two_yesterday">Позавчера</string>
     <string name="yesterday">Вчера</string>
     <string name="today">Сегодня</string>
+    <string name="security_violated">Нарушена безопасность периметра</string>
+    <string name="time_date">%1$s:%2$s %3$s.%4$s.%5$s</string>
 </resources>

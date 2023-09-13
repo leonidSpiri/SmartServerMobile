@@ -49,6 +49,23 @@ class RaspStateRepositoryImpl @Inject constructor(
         return statesList
     }
 
+    override suspend fun getViolatedSecurityList(): List<RaspState> {
+        var token = getAccessTokenUseCase.invoke() ?: return emptyList()
+        token = "Bearer $token"
+        val statesList = mutableListOf<RaspState>()
+        apiService.getViolatedSecurity(token).body()?.let { raspStateResponseList ->
+            raspStateResponseList.forEach { raspStateResponse ->
+                statesList.add(
+                    dtoMapper.mapRaspStateJsonContainerToRaspState(
+                        raspStateResponse,
+                        getRaspDeviceByTypeUseCase
+                    )
+                )
+            }
+        }
+        return statesList
+    }
+
 
     override suspend fun getRequiredTemp(): Int {
         var token = getAccessTokenUseCase.invoke() ?: return 0

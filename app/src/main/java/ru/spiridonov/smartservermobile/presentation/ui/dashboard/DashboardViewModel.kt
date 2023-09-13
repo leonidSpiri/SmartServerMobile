@@ -20,16 +20,18 @@ class DashboardViewModel @Inject constructor(
         get() = _raspStateList
 
     private val realDate = OffsetDateTime.now()
-    fun todayDate() = "${realDate.year}-${realDate.monthValue}-${realDate.dayOfMonth}"
+    fun todayDate() = parseDate(realDate)
 
-    fun yesterdayDate(): String {
-        val date = realDate.minusDays(1)
-        return "${date.year}-${date.monthValue}-${date.dayOfMonth}"
-    }
+    fun yesterdayDate() = parseDate(realDate.minusDays(1))
 
-    fun twoDaysAgoDate(): String {
-        val date = realDate.minusDays(2)
-        return "${date.year}-${date.monthValue}-${date.dayOfMonth}"
+    fun twoDaysAgoDate() = parseDate(realDate.minusDays(2))
+
+    private fun parseDate(date: OffsetDateTime): String {
+        val month =
+            if (date.monthValue >= 10) date.monthValue.toString() else "0${date.monthValue}"
+        val day =
+            if (date.dayOfMonth >= 10) date.dayOfMonth.toString() else "0${date.dayOfMonth}"
+        return "${date.year}-$month-$day"
     }
 
     fun getRaspStateListByDate(date: String) =

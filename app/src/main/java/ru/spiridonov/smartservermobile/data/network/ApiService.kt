@@ -23,7 +23,7 @@ interface ApiService {
     @GET("rasp_state/all_responses/{date}")
     suspend fun allRaspStateByDate(
         @Header("Authorization") token: String,
-        @Path(value = "date") date:String
+        @Path(value = "date") date: String
     ): Response<List<RaspStateModel>>
 
     @GET("rasp_dev")
@@ -41,6 +41,11 @@ interface ApiService {
     suspend fun getSecurity(
         @Header("Authorization") token: String
     ): Response<SecurityModel>
+
+    @GET("security/violated_history")
+    suspend fun getViolatedSecurity(
+        @Header("Authorization") token: String
+    ): Response<List<RaspStateModel>>
 
     @POST("mobile")
     suspend fun newMobileRequest(

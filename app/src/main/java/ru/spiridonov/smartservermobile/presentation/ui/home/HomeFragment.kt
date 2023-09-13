@@ -19,6 +19,7 @@ import ru.spiridonov.smartservermobile.SmartServerApp
 import ru.spiridonov.smartservermobile.databinding.FragmentHomeBinding
 import ru.spiridonov.smartservermobile.domain.entity.RaspState
 import ru.spiridonov.smartservermobile.domain.entity.Security
+import ru.spiridonov.smartservermobile.presentation.MainActivity
 import ru.spiridonov.smartservermobile.presentation.MainActivityState
 import ru.spiridonov.smartservermobile.presentation.MainViewModel
 import ru.spiridonov.smartservermobile.presentation.ViewModelFactory
@@ -89,7 +90,7 @@ class HomeFragment : Fragment() {
             }
         })
         binding.setSecurity.setOnClickListener {
-            binding.pbLoading.visibility = View.VISIBLE
+            (requireActivity() as MainActivity).changeProgressBarState()
             viewModel.setNewSecurity(!securityState.isSecurityTurnOn)
         }
     }
@@ -112,7 +113,7 @@ class HomeFragment : Fragment() {
         mainViewModel.mainActivityState.observe(viewLifecycleOwner) { mainActivityState ->
             when (mainActivityState) {
                 is MainActivityState.NeedToReLogin -> {
-                    binding.pbLoading.visibility = View.GONE
+                    (requireActivity() as MainActivity).changeProgressBarState(false)
                 }
 
                 is MainActivityState.SetupView -> {
@@ -122,7 +123,7 @@ class HomeFragment : Fragment() {
                                 .collect { homeState ->
                                     when (homeState) {
                                         is HomeState.Loading -> {
-                                            binding.pbLoading.visibility = View.VISIBLE
+                                            (requireActivity() as MainActivity).changeProgressBarState()
 
                                         }
 
@@ -130,7 +131,7 @@ class HomeFragment : Fragment() {
                                             viewModel.getRequiredTemp()
                                             binding.raspState = homeState.raspState
                                             raspState = homeState.raspState
-                                            binding.pbLoading.visibility = View.GONE
+                                            (requireActivity() as MainActivity).changeProgressBarState(false)
                                         }
                                     }
                                 }
@@ -143,7 +144,7 @@ class HomeFragment : Fragment() {
                                 .collect { security ->
                                     binding.securityState = security
                                     securityState = security
-                                    binding.pbLoading.visibility = View.GONE
+                                    (requireActivity() as MainActivity).changeProgressBarState(false)
                                 }
                         }
                     }

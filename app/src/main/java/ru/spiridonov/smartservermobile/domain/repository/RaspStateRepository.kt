@@ -6,6 +6,8 @@ import ru.spiridonov.smartservermobile.domain.entity.RaspState
 interface RaspStateRepository {
     suspend fun getRaspStateListByDate(date:String): List<RaspState>
 
+    suspend fun getViolatedSecurityList(): List<RaspState>
+
     suspend fun getRequiredTemp(): Int
 
     suspend fun setNewRaspState(raspState: RaspState)
