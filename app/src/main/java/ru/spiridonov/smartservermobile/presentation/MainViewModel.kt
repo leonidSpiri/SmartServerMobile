@@ -1,9 +1,12 @@
 package ru.spiridonov.smartservermobile.presentation
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -17,9 +20,11 @@ import ru.spiridonov.smartservermobile.domain.usecases.security.GetLastSecurityU
 import ru.spiridonov.smartservermobile.domain.usecases.user.GetAccessTokenUseCase
 import ru.spiridonov.smartservermobile.domain.usecases.user.IsUserLoggedInUseCase
 import ru.spiridonov.smartservermobile.presentation.ui.home.HomeState
+import ru.spiridonov.smartservermobile.workers.SecurityWorker
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
+    private val application: Application,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val getRaspDevicesUseCase: GetRaspDevicesUseCase,
@@ -45,6 +50,7 @@ class MainViewModel @Inject constructor(
                     else {
                         getRaspDevicesUseCase.invoke()
                         _mainActivityState.postValue(MainActivityState.SetupView)
+                        startSecurityWorker()
                     }
                 } else
                     _mainActivityState.postValue(MainActivityState.NeedToReLogin)
@@ -59,4 +65,13 @@ class MainViewModel @Inject constructor(
     val securityStateFlow: Flow<Security> = getLastSecurityUseCase.invoke()
         .filter { it != null }
         .map { it!! }
+
+    private fun startSecurityWorker() {
+        val workManager = WorkManager.getInstance(application)
+        workManager.enqueueUniqueWork(
+            SecurityWorker.WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
+            SecurityWorker.makeRequest()
+        )
+    }
 }

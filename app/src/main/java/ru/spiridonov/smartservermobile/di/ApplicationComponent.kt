@@ -15,7 +15,7 @@ import ru.spiridonov.smartservermobile.presentation.ui.notifications.Notificatio
     modules = [
         DataModule::class,
         ViewModelModule::class,
-        //WorkerModule::class
+        WorkerModule::class
     ]
 )
 interface ApplicationComponent {

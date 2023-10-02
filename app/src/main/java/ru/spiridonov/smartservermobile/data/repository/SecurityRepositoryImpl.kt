@@ -57,7 +57,7 @@ class SecurityRepositoryImpl @Inject constructor(
         val requestBody =
             jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
         val response = apiService.setSecurity(token, requestBody)
-        Log.d("setSecurity",response.code().toString() )
+        Log.d("setSecurity", response.code().toString())
     }
 
     private suspend fun downloadSecurityState() {

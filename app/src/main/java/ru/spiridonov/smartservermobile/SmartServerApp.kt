@@ -1,33 +1,30 @@
 package ru.spiridonov.smartservermobile
 
 import android.app.Application
-import android.content.Context
+import androidx.work.Configuration
 import ru.spiridonov.smartservermobile.di.DaggerApplicationComponent
+import ru.spiridonov.smartservermobile.workers.SecurityWorkerFactory
+import javax.inject.Inject
 
-class SmartServerApp : Application()/*, Configuration.Provider*/ {
+class SmartServerApp : Application(), Configuration.Provider {
 
-    //@Inject
-    //lateinit var workerFactory: CurrWorkerFactory
+    @Inject
+    lateinit var workerFactory: SecurityWorkerFactory
 
     val component by lazy {
-       DaggerApplicationComponent.factory().create(this)
+        DaggerApplicationComponent.factory().create(this)
     }
 
     override fun onCreate() {
         component.inject(this)
         super.onCreate()
-        appContext = applicationContext
     }
 
-    /*override fun getWorkManagerConfiguration(): Configuration {
+    override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
             .setWorkerFactory(
                 workerFactory
             )
             .build()
-    }*/
-
-    companion object {
-        lateinit var appContext: Context
     }
 }

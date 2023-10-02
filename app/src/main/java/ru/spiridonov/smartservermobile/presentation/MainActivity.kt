@@ -1,8 +1,13 @@
 package ru.spiridonov.smartservermobile.presentation
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -57,8 +62,11 @@ class MainActivity : AppCompatActivity() {
                         .show()
                 }
 
-                is MainActivityState.SetupView ->
+                is MainActivityState.SetupView -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                        checkNotificationPermission()
                     createScreen()
+                }
             }
         }
     }
@@ -79,5 +87,22 @@ class MainActivity : AppCompatActivity() {
 
     fun changeProgressBarState(turnOn: Boolean = true) {
         binding.pbLoading.isGone = !turnOn
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkNotificationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ),
+                0
+            )
+        }
     }
 }
