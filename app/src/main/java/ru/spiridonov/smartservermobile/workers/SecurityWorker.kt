@@ -24,6 +24,8 @@ import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.domain.usecases.user.GetAccessTokenUseCase
 import ru.spiridonov.smartservermobile.presentation.MainActivity
@@ -37,10 +39,12 @@ class SecurityWorker(
     (context, workerParameters) {
 
     override suspend fun doWork(): Result {
-        val token = getAccessTokenUseCase.invoke() ?: return Result.failure()
+        val token = getAccessTokenUseCase.invoke() ?: return Result.retry()
         createNotificationChannel(context)
         val client = HttpClient(CIO) {
-            install(WebSockets)
+            install(WebSockets) {
+                pingInterval = 1500
+            }
             install(Auth) {
                 bearer {
                     loadTokens { BearerTokens(token, token) }
@@ -48,19 +52,23 @@ class SecurityWorker(
             }
 
         }
-        client.webSocket(
-            method = HttpMethod.Get,
-            host = "77.51.185.88",
-            port = 9888,
-            path = "/security_websocket"
-        ) {
-            while (true) {
-                incoming.receive() as? Frame.Text ?: continue
-                createNotification(context)
+        withContext(Dispatchers.Main) {
+            client.webSocket(
+                method = HttpMethod.Get,
+                host = "77.51.185.88",
+                port = 9888,
+                path = "/security_websocket"
+            ) {
+                while (true) {
+                    try {
+                        incoming.receive() as? Frame.Text ?: continue
+                        createNotification(context)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
             }
         }
-
-        client.close()
 
         return Result.retry()
     }
