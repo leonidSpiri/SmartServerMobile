@@ -25,6 +25,7 @@ import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.domain.usecases.user.GetAccessTokenUseCase
@@ -52,7 +53,7 @@ class SecurityWorker(
             }
 
         }
-        withContext(Dispatchers.Main) {
+        runBlocking(Dispatchers.Main) {
             client.webSocket(
                 method = HttpMethod.Get,
                 host = "77.51.185.88",
@@ -60,12 +61,9 @@ class SecurityWorker(
                 path = "/security_websocket"
             ) {
                 while (true) {
-                    try {
-                        incoming.receive() as? Frame.Text ?: continue
-                        createNotification(context)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    incoming.receive() as? Frame.Text ?: continue
+                    createNotification(context)
+
                 }
             }
         }
