@@ -56,8 +56,8 @@ class SecurityWorker(
         runBlocking(Dispatchers.Main) {
             client.webSocket(
                 method = HttpMethod.Get,
-                host = "77.51.185.88",
-                port = 9888,
+                host = "climat.protesys.ru",
+                port = 80,
                 path = "/security_websocket"
             ) {
                 while (true) {

@@ -19,12 +19,10 @@ class SmartServerApp : Application(), Configuration.Provider {
         component.inject(this)
         super.onCreate()
     }
+    override fun getWorkManagerConfiguration() = Configuration.Builder()
+        .setWorkerFactory(
+            workerFactory
+        )
+        .build()
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
-            .setWorkerFactory(
-                workerFactory
-            )
-            .build()
-    }
 }
