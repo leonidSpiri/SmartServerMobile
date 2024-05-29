@@ -26,7 +26,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import ru.spiridonov.smartservermobile.R
 import ru.spiridonov.smartservermobile.domain.usecases.user.GetAccessTokenUseCase
 import ru.spiridonov.smartservermobile.presentation.MainActivity
