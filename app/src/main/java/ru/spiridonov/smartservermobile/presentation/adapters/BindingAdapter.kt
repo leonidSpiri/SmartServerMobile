@@ -28,6 +28,20 @@ fun setRealBoxTemp(textView: TextView, raspState: List<Pair<RaspDevices, String>
         String.format(textView.context.resources.getString(R.string.real_box_temp), realTemp)
 }
 
+@BindingAdapter("setRealCond")
+fun setRealCond(textView: TextView, raspState: List<Pair<RaspDevices, String>>?) {
+    val context = textView.context
+    val realTemp = raspState?.find { it.first.devType == DevTypes.CONDITIONER }?.second.toBoolean()
+    textView.text =
+        if (realTemp) context.getString(R.string.cond_on) else context.getString(R.string.cond_off)
+    textView.setTextColor(
+        if (realTemp) context.resources.getColor(
+            R.color.green,
+            context.theme
+        ) else Color.RED
+    )
+}
+
 @BindingAdapter("setRealFan")
 fun setRealFan(textView: TextView, raspState: List<Pair<RaspDevices, String>>?) {
     val context = textView.context
@@ -110,6 +124,13 @@ fun parseOffsetDateTime(textView: TextView, date: OffsetDateTime) {
         if (date.dayOfMonth >= 10) date.dayOfMonth.toString() else "0${date.dayOfMonth}"
     val hour = if (date.hour >= 10) date.hour.toString() else "0${date.hour}"
     val minute = if (date.minute >= 10) date.minute.toString() else "0${date.minute}"
-    textView.text = textView.context.getString(R.string.time_date, hour, minute, day, month, date.year.toString())
+    textView.text = textView.context.getString(
+        R.string.time_date,
+        hour,
+        minute,
+        day,
+        month,
+        date.year.toString()
+    )
 
 }

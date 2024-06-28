@@ -8,7 +8,13 @@ data class RaspStateModel(
     @Expose
     val dateTime: String,
     @Expose
-    val raspState: String,
+    val fanWorks: Boolean,
+    @Expose
+    val conditionerWorks: Boolean,
+    @Expose
+    val tempSensor: Int,
+    @Expose
+    val boxTempSensor: Int,
     @Expose
     val isSecurityViolated: Boolean = false
 )

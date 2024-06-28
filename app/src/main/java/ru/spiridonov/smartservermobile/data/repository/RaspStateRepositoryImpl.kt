@@ -10,16 +10,15 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import ru.spiridonov.smartservermobile.data.mapper.DtoMapper
 import ru.spiridonov.smartservermobile.data.network.ApiService
+import ru.spiridonov.smartservermobile.data.network.model.MobileResponseModel
+import ru.spiridonov.smartservermobile.data.network.model.NewRequiredState
+import ru.spiridonov.smartservermobile.domain.entity.DevTypes
 import ru.spiridonov.smartservermobile.domain.entity.RaspState
 import ru.spiridonov.smartservermobile.domain.repository.RaspStateRepository
 import ru.spiridonov.smartservermobile.domain.usecases.raspdevices.GetRaspDeviceByTypeUseCase
 import ru.spiridonov.smartservermobile.domain.usecases.user.GetAccessTokenUseCase
-import java.util.Locale
 import javax.inject.Inject
 
 class RaspStateRepositoryImpl @Inject constructor(
@@ -76,17 +75,26 @@ class RaspStateRepositoryImpl @Inject constructor(
     override suspend fun setNewRaspState(raspState: RaspState) {
         var token = getAccessTokenUseCase.invoke() ?: return
         token = "Bearer $token"
-        val jsonObject = JSONObject()
-        var state = ""
+        var fan = ""
+        var cond = ""
+        var temp = 0
         raspState.raspState.forEach {
-            state += "${it.first.devType}:${it.second.lowercase(Locale.getDefault())},"
+            when (it.first.devType) {
+                DevTypes.FAN -> fan = it.second
+                DevTypes.CONDITIONER -> cond = it.second
+                DevTypes.TEMP_SENSOR -> temp = it.second.toInt()
+                else -> {}
+            }
         }
-        state = state.dropLast(1)
-        jsonObject.put("newRequiredState", state)
-        val jsonObjectString = jsonObject.toString()
-        val requestBody =
-            jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
-        apiService.newMobileRequest(token, requestBody)
+        val mobileResponseModel =
+            MobileResponseModel(
+                NewRequiredState(
+                    fan = fan,
+                    conditioner = cond,
+                    tempSensor = temp
+                )
+            )
+        apiService.newMobileRequest(token, mobileResponseModel)
     }
 
     override fun getLastRaspState(): Flow<RaspState?> = flow {

@@ -38,11 +38,23 @@ class DtoMapper @Inject constructor(
         getRaspDeviceByTypeUseCase: GetRaspDeviceByTypeUseCase
     ): RaspState {
         val statesList = mutableListOf<Pair<RaspDevices, String>>()
-        jsonContainer.raspState.split(", ").forEach {
-            val raspDev =
-                getRaspDeviceByTypeUseCase.invoke(it.substringBefore(":")) ?: return@forEach
-            statesList.add(Pair(raspDev, it.substringAfter(":")))
+
+        getRaspDeviceByTypeUseCase.invoke("FAN")?.let { raspDev ->
+            statesList.add(Pair(raspDev, jsonContainer.fanWorks.toString()))
         }
+
+        getRaspDeviceByTypeUseCase.invoke("CONDITIONER")?.let { raspDev ->
+            statesList.add(Pair(raspDev, jsonContainer.conditionerWorks.toString()))
+        }
+
+        getRaspDeviceByTypeUseCase.invoke("TEMP_SENSOR")?.let { raspDev ->
+            statesList.add(Pair(raspDev, jsonContainer.tempSensor.toString()))
+        }
+
+        getRaspDeviceByTypeUseCase.invoke("BOX_TEMP_SENSOR")?.let { raspDev ->
+            statesList.add(Pair(raspDev, jsonContainer.boxTempSensor.toString()))
+        }
+
 
         val date = OffsetDateTime.parse(jsonContainer.dateTime).plusHours(3)
         return RaspState(

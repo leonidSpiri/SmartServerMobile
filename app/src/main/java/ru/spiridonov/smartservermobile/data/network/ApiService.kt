@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import ru.spiridonov.smartservermobile.data.network.model.MobileResponseModel
 import ru.spiridonov.smartservermobile.data.network.model.RaspDevicesModel
 import ru.spiridonov.smartservermobile.data.network.model.RaspStateModel
 import ru.spiridonov.smartservermobile.data.network.model.SecurityModel
@@ -50,7 +51,7 @@ interface ApiService {
     @POST("mobile")
     suspend fun newMobileRequest(
         @Header("Authorization") token: String,
-        @Body requestBody: RequestBody
+        @Body requestBody: MobileResponseModel
     ): Response<*>
 
     @GET("mobile/required_temp")
